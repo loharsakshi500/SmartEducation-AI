@@ -3,17 +3,9 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import os
 
-# ==================================================
-# LOAD ENVIRONMENT VARIABLES
-# ==================================================
-
-load_dotenv()
-
-API_KEY = os.getenv("OPENROUTER_API_KEY")
-
-# ==================================================
-# PAGE CONFIGURATION
-# ==================================================
+# =========================================================
+# CONFIG
+# =========================================================
 
 st.set_page_config(
     page_title="Smart Education AI",
@@ -22,18 +14,22 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ==================================================
-# CHECK API KEY
-# ==================================================
+# =========================================================
+# ENVIRONMENT
+# =========================================================
+
+load_dotenv()
+
+API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 if not API_KEY:
-    st.error("❌ OpenRouter API key not found.")
-    st.info("Please add OPENROUTER_API_KEY to your .env file.")
+    st.error("OpenRouter API key not found.")
+    st.info("Add OPENROUTER_API_KEY to your .env file.")
     st.stop()
 
-# ==================================================
-# OPENROUTER CLIENT
-# ==================================================
+# =========================================================
+# OPENROUTER
+# =========================================================
 
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
@@ -42,254 +38,14 @@ client = OpenAI(
 
 MODEL = "google/gemini-2.5-flash"
 
-# ==================================================
-# CUSTOM CSS
-# ==================================================
-
-st.markdown(
-    """
-    <style>
-
-    /* ==============================================
-       MAIN APP
-       ============================================== */
-
-    .stApp {
-        background-color: #f5f7fb;
-    }
-
-    #MainMenu {
-        visibility: hidden;
-    }
-
-    footer {
-        visibility: hidden;
-    }
-
-    /* ==============================================
-       MAIN HEADER
-       ============================================== */
-
-    .main-header {
-        background: linear-gradient(
-            135deg,
-            #4f46e5,
-            #7c3aed
-        );
-
-        padding: 35px 20px;
-        border-radius: 20px;
-        text-align: center;
-        color: white;
-        margin-bottom: 25px;
-    }
-
-    .main-header h1 {
-        font-size: 42px;
-        margin: 0;
-        color: white !important;
-    }
-
-    .main-header p {
-        font-size: 18px;
-        margin-top: 8px;
-        color: white !important;
-    }
-
-    /* ==============================================
-       WELCOME BOX
-       ============================================== */
-
-    .welcome {
-        background-color: white;
-        padding: 22px;
-        border-radius: 16px;
-        margin-bottom: 25px;
-
-        box-shadow:
-            0 3px 12px rgba(0,0,0,0.06);
-    }
-
-    .welcome h3 {
-        margin-top: 0;
-        color: #222222 !important;
-    }
-
-    .welcome p {
-        color: #444444 !important;
-        font-size: 16px;
-    }
-
-    /* ==============================================
-       FEATURE CARDS
-       ============================================== */
-
-    .card {
-        background-color: white;
-
-        padding: 20px;
-
-        border-radius: 16px;
-
-        text-align: center;
-
-        min-height: 145px;
-
-        border: 1px solid #eeeeee;
-
-        box-shadow:
-            0 3px 12px rgba(0,0,0,0.05);
-    }
-
-    .card-icon {
-        font-size: 35px;
-    }
-
-    .card-title {
-        font-size: 17px;
-        font-weight: bold;
-        margin-top: 8px;
-        color: #222222 !important;
-    }
-
-    .card-text {
-        font-size: 13px;
-        color: #777777 !important;
-        margin-top: 5px;
-    }
-
-    /* ==============================================
-       SECTION TITLE
-       ============================================== */
-
-    .section-title {
-        font-size: 24px;
-        font-weight: bold;
-
-        margin-top: 25px;
-        margin-bottom: 15px;
-
-        color: #222222 !important;
-    }
-
-    /* ==============================================
-       SIDEBAR
-       ============================================== */
-
-    section[data-testid="stSidebar"] {
-        background-color: white;
-    }
-
-    section[data-testid="stSidebar"] * {
-        color: #222222;
-    }
-
-    /* Sidebar buttons */
-
-    section[data-testid="stSidebar"]
-    .stButton button {
-        color: #222222 !important;
-        background-color: #f5f5f5 !important;
-        border: 1px solid #dddddd !important;
-    }
-
-    /* ==============================================
-       CHAT MESSAGE
-       ============================================== */
-
-    [data-testid="stChatMessage"] {
-        color: #222222 !important;
-    }
-
-    [data-testid="stChatMessage"] p {
-        color: #222222 !important;
-    }
-
-    [data-testid="stChatMessage"] span {
-        color: #222222 !important;
-    }
-
-    [data-testid="stChatMessage"] li {
-        color: #222222 !important;
-    }
-
-    [data-testid="stChatMessage"] ul {
-        color: #222222 !important;
-    }
-
-    [data-testid="stChatMessage"] ol {
-        color: #222222 !important;
-    }
-
-    [data-testid="stChatMessage"] strong {
-        color: #111111 !important;
-    }
-
-    [data-testid="stChatMessage"] em {
-        color: #333333 !important;
-    }
-
-    /* ==============================================
-       CODE IN AI RESPONSE
-       ============================================== */
-
-    [data-testid="stChatMessage"] code {
-        color: #222222 !important;
-    }
-
-    /* ==============================================
-       CHAT INPUT
-       ============================================== */
-
-    [data-testid="stChatInput"] textarea {
-        color: #222222 !important;
-        background-color: white !important;
-    }
-
-    [data-testid="stChatInput"] textarea::placeholder {
-        color: #777777 !important;
-    }
-
-    /* ==============================================
-       NORMAL MARKDOWN
-       ============================================== */
-
-    .stMarkdown p {
-        color: #222222;
-    }
-
-    .stMarkdown li {
-        color: #222222;
-    }
-
-    /* ==============================================
-       FOOTER
-       ============================================== */
-
-    .footer {
-        text-align: center;
-        color: #777777 !important;
-        padding: 15px;
-        font-size: 14px;
-    }
-
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# ==================================================
+# =========================================================
 # SYSTEM PROMPT
-# ==================================================
+# =========================================================
 
 SYSTEM_PROMPT = """
-You are Smart Education AI, an educational AI assistant.
+You are Smart Education AI, an AI learning assistant for students.
 
-Your purpose is to help students learn difficult topics
-in simple and understandable language.
-
-You can help with:
-
+Help students with:
 - Programming
 - Computer Science
 - Mathematics
@@ -300,37 +56,34 @@ You can help with:
 - Web Development
 - General academic subjects
 
-For academic questions:
+Use simple, clear language.
 
-1. Give a simple definition
-2. Explain clearly
-3. Give an example
-4. Give important points
+For academic questions:
+- Give a definition when useful
+- Explain the concept clearly
+- Give examples
+- Give important points
 
 For exam questions:
-
-- Use easy language
 - Give point-wise answers
+- Use easy language
 - Make answers exam-friendly
-- Mention important points
+- Follow the requested mark format if the student mentions 2 marks,
+  5 marks, 10 marks, etc.
 
-For programming questions:
+For programming:
+- Give clean code
+- Explain the code
+- Keep examples understandable
 
-- Give clean and simple code
-- Explain the code clearly
-
-Always try to make the answer easy for students
-to understand.
-
-Avoid unnecessarily complicated explanations.
+Do not unnecessarily make answers complicated.
 """
 
-# ==================================================
-# CHAT MEMORY
-# ==================================================
+# =========================================================
+# SESSION STATE
+# =========================================================
 
 if "messages" not in st.session_state:
-
     st.session_state.messages = [
         {
             "role": "system",
@@ -338,24 +91,188 @@ if "messages" not in st.session_state:
         }
     ]
 
-# ==================================================
+if "chat_titles" not in st.session_state:
+    st.session_state.chat_titles = []
+
+# =========================================================
+# CSS
+# =========================================================
+
+st.markdown(
+    """
+    <style>
+
+    /* =========================
+       GLOBAL
+       ========================= */
+
+    .stApp {
+        background: #ffffff;
+    }
+
+    #MainMenu {
+        visibility: hidden;
+    }
+
+    footer {
+        visibility: hidden;
+    }
+
+    /* =========================
+       SIDEBAR
+       ========================= */
+
+    section[data-testid="stSidebar"] {
+        background: #f7f7f8;
+        border-right: 1px solid #e5e5e5;
+    }
+
+    section[data-testid="stSidebar"] * {
+        color: #202123;
+    }
+
+    .sidebar-brand {
+        font-size: 20px;
+        font-weight: 700;
+        padding: 8px 4px 18px 4px;
+    }
+
+    /* =========================
+       MAIN AREA
+       ========================= */
+
+    .main-container {
+        max-width: 900px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    /* =========================
+       WELCOME
+       ========================= */
+
+    .welcome-container {
+        text-align: center;
+        padding-top: 17vh;
+        padding-bottom: 30px;
+    }
+
+    .welcome-icon {
+        font-size: 45px;
+        margin-bottom: 12px;
+    }
+
+    .welcome-title {
+        font-size: 32px;
+        font-weight: 650;
+        color: #202123 !important;
+        margin-bottom: 8px;
+    }
+
+    .welcome-subtitle {
+        font-size: 16px;
+        color: #6b6b6b !important;
+    }
+
+    /* =========================
+       QUICK ACTIONS
+       ========================= */
+
+    .quick-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #555 !important;
+        margin-bottom: 8px;
+    }
+
+    /* =========================
+       CHAT
+       ========================= */
+
+    [data-testid="stChatMessage"] {
+        color: #202123 !important;
+    }
+
+    [data-testid="stChatMessage"] p,
+    [data-testid="stChatMessage"] li,
+    [data-testid="stChatMessage"] span {
+        color: #202123 !important;
+    }
+
+    [data-testid="stChatMessage"] code {
+        color: #202123 !important;
+    }
+
+    /* =========================
+       CHAT INPUT
+       ========================= */
+
+    [data-testid="stChatInput"] {
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    [data-testid="stChatInput"] textarea {
+        color: #202123 !important;
+        background: #ffffff !important;
+    }
+
+    [data-testid="stChatInput"] textarea::placeholder {
+        color: #777777 !important;
+    }
+
+    /* =========================
+       BUTTONS
+       ========================= */
+
+    .stButton button {
+        border-radius: 10px;
+        border: 1px solid #dddddd;
+        background: white;
+        color: #202123;
+    }
+
+    .stButton button:hover {
+        border-color: #999999;
+        background: #f5f5f5;
+    }
+
+    /* =========================
+       FOOTER
+       ========================= */
+
+    .app-footer {
+        text-align: center;
+        color: #999999 !important;
+        font-size: 12px;
+        padding: 20px;
+    }
+
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# =========================================================
 # SIDEBAR
-# ==================================================
+# =========================================================
 
 with st.sidebar:
 
-    st.markdown("## 🎓 Smart Education AI")
-
-    st.caption(
-        "Your Personal AI Learning Assistant"
+    st.markdown(
+        """
+        <div class="sidebar-brand">
+            🎓 Smart Education AI
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
-    st.divider()
-
-    # New Chat Button
+    # New chat
 
     if st.button(
-        "🆕 New Chat",
+        "＋  New chat",
         use_container_width=True
     ):
 
@@ -370,108 +287,111 @@ with st.sidebar:
 
     st.divider()
 
-    # Features
+    # Study tools
 
-    st.markdown("### 📚 Features")
+    st.markdown("### Study tools")
 
-    st.write("🤖 AI Chatbot")
-    st.write("📖 Study Assistance")
-    st.write("📝 Exam Preparation")
-    st.write("💻 Programming Help")
-    st.write("💡 Simple Explanations")
+    if st.button(
+        "📚  Explain a topic",
+        use_container_width=True
+    ):
+        st.session_state.quick_prompt = (
+            "Explain a difficult academic topic in simple language."
+        )
+
+    if st.button(
+        "📝  Generate quiz",
+        use_container_width=True
+    ):
+        st.session_state.quick_prompt = (
+            "Generate a short quiz for me on a topic I provide."
+        )
+
+    if st.button(
+        "📖  Make study notes",
+        use_container_width=True
+    ):
+        st.session_state.quick_prompt = (
+            "Help me create short and important study notes."
+        )
+
+    if st.button(
+        "💻  Coding help",
+        use_container_width=True
+    ):
+        st.session_state.quick_prompt = (
+            "Help me understand a programming concept with simple code."
+        )
 
     st.divider()
 
-    # Study Tip
+    # Chat history
 
-    st.markdown("### 🎯 Study Tip")
+    st.markdown("### Recent chats")
 
-    st.info(
-        "Ask your question naturally. "
-        "You can ask for short notes, examples, "
-        "exam answers or programming help."
-    )
+    user_messages = [
+        m for m in st.session_state.messages
+        if m["role"] == "user"
+    ]
+
+    if user_messages:
+
+        for msg in user_messages[-5:]:
+            title = msg["content"][:35]
+
+            if len(msg["content"]) > 35:
+                title += "..."
+
+            st.caption("💬 " + title)
+
+    else:
+
+        st.caption("No conversations yet")
 
     st.divider()
 
     st.caption("Smart Education AI")
-    st.caption("AI-Powered Learning Assistant")
+    st.caption("AI learning assistant")
 
-# ==================================================
-# MAIN HEADER
-# ==================================================
+# =========================================================
+# MAIN
+# =========================================================
 
 st.markdown(
-    """
-    <div class="main-header">
-
-        <h1>🎓 Smart Education AI</h1>
-
-        <p>
-            Your Personal AI Learning Assistant
-        </p>
-
-    </div>
-    """,
+    '<div class="main-container">',
     unsafe_allow_html=True
 )
 
-# ==================================================
-# WELCOME SECTION
-# ==================================================
+# =========================================================
+# CHECK WHETHER CHAT EXISTS
+# =========================================================
 
-st.markdown(
-    """
-    <div class="welcome">
-
-        <h3>👋 Welcome, Student!</h3>
-
-        <p>
-            Learn smarter with AI. Ask questions,
-            understand difficult concepts, prepare
-            for exams and get programming help.
-        </p>
-
-    </div>
-    """,
-    unsafe_allow_html=True
+has_chat = any(
+    message["role"] == "user"
+    for message in st.session_state.messages
 )
 
-# ==================================================
-# FEATURES
-# ==================================================
+# =========================================================
+# WELCOME SCREEN
+# =========================================================
 
-st.markdown(
-    """
-    <div class="section-title">
-        ✨ What can I help you with?
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-col1, col2, col3, col4 = st.columns(4)
-
-# --------------------------------------------------
-# CARD 1
-# --------------------------------------------------
-
-with col1:
+if not has_chat:
 
     st.markdown(
         """
-        <div class="card">
+        <div class="welcome-container">
 
-            <div class="card-icon">
-                🤖
+            <div class="welcome-icon">
+                🎓
             </div>
 
-            <div class="card-title">
-                AI Chatbot
+            <div class="welcome-title">
+                What can I help you learn?
             </div>
 
-            <div class="card-text">
-                Ask questions and get instant answers.
+            <div class="welcome-subtitle">
+                Ask questions, understand concepts,
+                prepare for exams or learn programming.
             </div>
 
         </div>
@@ -479,103 +399,49 @@ with col1:
         unsafe_allow_html=True
     )
 
-# --------------------------------------------------
-# CARD 2
-# --------------------------------------------------
-
-with col2:
-
     st.markdown(
-        """
-        <div class="card">
-
-            <div class="card-icon">
-                📚
-            </div>
-
-            <div class="card-title">
-                Study Assistance
-            </div>
-
-            <div class="card-text">
-                Understand difficult topics easily.
-            </div>
-
-        </div>
-        """,
+        '<div class="quick-title">Try asking</div>',
         unsafe_allow_html=True
     )
 
-# --------------------------------------------------
-# CARD 3
-# --------------------------------------------------
+    q1, q2, q3 = st.columns(3)
 
-with col3:
+    with q1:
 
-    st.markdown(
-        """
-        <div class="card">
+        if st.button(
+            "📖 Explain a topic",
+            use_container_width=True
+        ):
+            st.session_state.quick_prompt = (
+                "Explain a difficult academic topic in simple language."
+            )
+            st.rerun()
 
-            <div class="card-icon">
-                📝
-            </div>
+    with q2:
 
-            <div class="card-title">
-                Exam Preparation
-            </div>
+        if st.button(
+            "📝 Prepare for exam",
+            use_container_width=True
+        ):
+            st.session_state.quick_prompt = (
+                "Help me prepare an exam answer."
+            )
+            st.rerun()
 
-            <div class="card-text">
-                Get simple and exam-friendly answers.
-            </div>
+    with q3:
 
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+        if st.button(
+            "💻 Learn programming",
+            use_container_width=True
+        ):
+            st.session_state.quick_prompt = (
+                "Teach me a programming concept with a simple example."
+            )
+            st.rerun()
 
-# --------------------------------------------------
-# CARD 4
-# --------------------------------------------------
-
-with col4:
-
-    st.markdown(
-        """
-        <div class="card">
-
-            <div class="card-icon">
-                💻
-            </div>
-
-            <div class="card-title">
-                Programming Help
-            </div>
-
-            <div class="card-text">
-                Learn coding with simple examples.
-            </div>
-
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-# ==================================================
-# CHAT SECTION
-# ==================================================
-
-st.markdown(
-    """
-    <div class="section-title">
-        💬 Ask Smart Education AI
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-# ==================================================
-# DISPLAY CHAT HISTORY
-# ==================================================
+# =========================================================
+# DISPLAY CHAT
+# =========================================================
 
 for message in st.session_state.messages:
 
@@ -584,27 +450,35 @@ for message in st.session_state.messages:
 
     with st.chat_message(message["role"]):
 
-        st.markdown(
-            message["content"]
-        )
+        st.markdown(message["content"])
 
-# ==================================================
-# CHAT INPUT
-# ==================================================
+# =========================================================
+# QUICK PROMPT
+# =========================================================
 
-user_question = st.chat_input(
-    "💬 Ask your study question..."
+quick_prompt = st.session_state.pop(
+    "quick_prompt",
+    None
 )
 
-# ==================================================
-# AI RESPONSE
-# ==================================================
+# =========================================================
+# CHAT INPUT
+# =========================================================
+
+user_question = st.chat_input(
+    "Message Smart Education AI..."
+)
+
+if quick_prompt and not user_question:
+    user_question = quick_prompt
+
+# =========================================================
+# SEND MESSAGE
+# =========================================================
 
 if user_question:
 
-    # ------------------------------------------------
-    # ADD USER MESSAGE
-    # ------------------------------------------------
+    # Add user message
 
     st.session_state.messages.append(
         {
@@ -613,40 +487,26 @@ if user_question:
         }
     )
 
-    # ------------------------------------------------
-    # DISPLAY USER MESSAGE
-    # ------------------------------------------------
+    # Display user
 
     with st.chat_message("user"):
 
-        st.markdown(
-            user_question
-        )
+        st.markdown(user_question)
 
-    # ------------------------------------------------
-    # GENERATE AI RESPONSE
-    # ------------------------------------------------
+    # Generate AI response
 
     with st.chat_message("assistant"):
 
-        with st.spinner(
-            "🤔 Smart Education AI is thinking..."
-        ):
+        with st.spinner("Thinking..."):
 
             try:
 
                 response = client.chat.completions.create(
-
                     model=MODEL,
-
                     messages=st.session_state.messages,
-
                     temperature=0.7,
-
                     max_tokens=1000
                 )
-
-                # Get response
 
                 answer = (
                     response
@@ -655,11 +515,9 @@ if user_question:
                     .content
                 )
 
-                # Display response
-
                 st.markdown(answer)
 
-                # Save response
+                # Save AI response
 
                 st.session_state.messages.append(
                     {
@@ -671,31 +529,18 @@ if user_question:
             except Exception as e:
 
                 st.error(
-                    "❌ Something went wrong "
-                    "while connecting to the AI."
+                    "Unable to connect to the AI."
                 )
 
-                st.code(
-                    str(e)
-                )
-
-# ==================================================
-# FOOTER
-# ==================================================
-
-st.markdown("---")
+                st.code(str(e))
 
 st.markdown(
     """
-    <div class="footer">
-
-        🎓 <b>Smart Education AI</b>
-
-        <br>
-
-        Learn • Understand • Practice • Improve
-
+    <div class="app-footer">
+        Smart Education AI • Learn smarter with AI
     </div>
     """,
     unsafe_allow_html=True
-            )
+)
+
+st.markdown("</div>", unsafe_allow_html=True)
